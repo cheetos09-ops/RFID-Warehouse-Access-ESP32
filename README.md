@@ -16,3 +16,4 @@ This project implements an RFID-based access control system for managing access 
 
 :computer: Software: Thonny IDE- MicroPython (running on the ESP32), HTML, CSS, and JavaScript for the web interface, mfrc522 library for RFID scanning, network and socket for creating a web server on the ESP32.
 
+`#000000`
