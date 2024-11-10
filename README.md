@@ -11,6 +11,8 @@ This project implements an RFID-based access control system for managing access 
 5. _Relay Control: _Simulates locking/unlocking a door to grant access to authorized personnel.
 
 **Components Used:** 
+
 :hammer_and_wrench: Hardware: ESP32 Microcontroller, MFRC522 RFID Reader Module ,Warehouse sections (simulated as inventory data in the code)
+
 :computer: Software: Thonny IDE- MicroPython (running on the ESP32), HTML, CSS, and JavaScript for the web interface, mfrc522 library for RFID scanning, network and socket for creating a web server on the ESP32.
 
