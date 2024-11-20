@@ -19,9 +19,9 @@ relay = Pin(12, Pin.OUT)
 warehouse_access = {
     "0xbcb23202": {"section": "Section A", "items": "Resistors", "quantity": 100, "authorized": True, "status": "Not Scanned"},
     "0x533c11da": {"section": "Section B", "items": "Wooden Crates", "quantity": 75, "authorized": True, "status": "Not Scanned"},
-    "0x2907b498": {"section": "Section C", "items": "Electrical Cables", "quantity": 50, "authorized": False, "status": "Not Scanned"},  # Unauthorized
-    "0x29eec498": {"section": "Section D", "items": "Steel Beams", "quantity": 120, "authorized": True, "status": "Not Scanned"},
-    "0x59e1f097": {"section": "Section E", "items": "Plastic Containers", "quantity": 60, "authorized": False, "status": "Not Scanned"}   # Unauthorized
+    "0xa3e7dce1": {"section": "Section C", "items": "Electrical Cables", "quantity": 50, "authorized": False, "status": "Not Scanned"},  # Unauthorized
+    "0x737505da": {"section": "Section D", "items": "Steel Beams", "quantity": 120, "authorized": True, "status": "Not Scanned"},
+    "0x66033402": {"section": "Section E", "items": "Plastic Containers", "quantity": 60, "authorized": False, "status": "Not Scanned"}   # Unauthorized
 }
 
 # Global variable to store the latest RFID scan information
@@ -69,13 +69,130 @@ def web_page():
     <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-    html { font-family: Arial; display: inline-block; margin: 0px auto; text-align: center; }
-    h2 { font-size: 2.0rem; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: center; }
-    th { background-color: #f2f2f2; }
+    :root {
+        --primary-color: #007acc;
+        --secondary-color: #f4f7fc;
+        --text-color: #333;
+        --bg-gradient: linear-gradient(to bottom, #d4ebf2, #f4f7fc);
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        transition: all 0.5s ease;
+    }
+    header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .container {
+        max-width: 1000px;
+        margin: 30px auto;
+        background: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: background 0.5s ease, color 0.5s ease;
+    }
+    h2 {
+        color: var(--primary-color);
+        text-align: center;
+        padding: 20px;
+        margin: 0;
+        border-bottom: 2px solid #f2f2f2;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+    th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: bold;
+    }
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+    p {
+        font-size: 1.2rem;
+        margin: 20px;
+        text-align: center;
+    }
+    .status-log {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    footer {
+        background-color: var(--primary-color);
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+    }
+    .theme-toggle {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 1rem;
+        border-radius: 5px;
+        margin: 20px;
+        transition: background 0.5s ease;
+    }
+    .theme-toggle:hover {
+        background-color: #005a99;
+    }
+
+    /* Dark theme variables */
+    body.dark-theme {
+        --primary-color: #1a1a2e;
+        --secondary-color: #16213e;
+        --text-color: #eaeaea;
+        --bg-gradient: linear-gradient(to bottom, #0f3460, #1a1a2e);
+    }
+    body.dark-theme .container {
+        background: var(--secondary-color);
+    }
+    body.dark-theme table th {
+        background-color: #0f3460;
+    }
+    body.dark-theme table tr:nth-child(even) {
+        background-color: #16213e;
+    }
+    body.dark-theme table tr:hover {
+        background-color: #1a1a2e;
+    }
     </style>
     <script>
+    // Function to toggle between light and dark themes
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        const button = document.getElementById('theme-toggle');
+        if (document.body.classList.contains('dark-theme')) {
+            button.innerHTML = 'Switch to Light Theme';
+        } else {
+            button.innerHTML = 'Switch to Dark Theme';
+        }
+    }
     // Function to fetch RFID scan data and update the page
     function fetchAccessLog() {
         var xhr = new XMLHttpRequest();
@@ -92,19 +209,26 @@ def web_page():
     </script>
     </head>
     <body>
-    <h2>Warehouse Inventory & RFID Access</h2>
-    <table>
-        <tr>
-            <th>Section</th>
-            <th>Item Description</th>
-            <th>Quantity</th>
-            <th>Status</th>
-        </tr>
-        <tbody id="status_table">
-        """ + table_rows + """
-        </tbody>
-    </table>
-    <p>Status: <span id="access_log">""" + access_log + """</span></p>
+    <header>RFID Warehouse Management System</header>
+    <div class="container">
+        <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()">Switch to Dark Theme</button>
+        <h2>Warehouse Inventory & RFID Access</h2>
+        <table>
+            <tr>
+                <th>Section</th>
+                <th>Item Description</th>
+                <th>Quantity</th>
+                <th>Status</th>
+            </tr>
+            <tbody id="status_table">
+            """ + table_rows + """
+            </tbody>
+        </table>
+        <p>Status: <span class="status-log" id="access_log">""" + access_log + """</span></p>
+    </div>
+    <footer>
+        &copy; 2024 RFID Management | Designed for Efficiency
+    </footer>
     </body></html>"""
     return html
 
