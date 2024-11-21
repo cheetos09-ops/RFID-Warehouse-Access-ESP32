@@ -1,3 +1,4 @@
+#IOT Mini Project- Shivani Bhat and Chetanarupa Jirgale
 from mfrc522 import MFRC522
 from machine import Pin, SPI
 import time
@@ -327,4 +328,3 @@ try:
 
 except KeyboardInterrupt:
     print("Program stopped")
-
